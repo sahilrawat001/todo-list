@@ -15,7 +15,7 @@ app.use("/user", router);
 app.use("/data",list );
   
 mongoose.connect(url).then(
-	app.listen(port)
+	app.listen(port) 
 
 ).then(() => {
 	console.log(`running at port ${port}`);
