@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
 
+
 const userSchema = new Schema({
 	username: {
 		type: String,
@@ -16,6 +17,12 @@ const userSchema = new Schema({
 		type: String,
 		required: true, 
 		minlength: 8
+	},
+	mobile: {
+		type: String,
+		required: true
+
 	}
 });
+
 module.exports = mongoose.model("User", userSchema);

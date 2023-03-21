@@ -21,18 +21,17 @@ const getAllData = async (req, res) => {
 		return res.status(404).send({ message: " user not find" });
 	}
 	return res.status(200).send({ datas });
-};
+}; 
 
 const newData = async (req, res) => {
 	let token = req.headers.token;
-	// console.log(token, "--");
-	let result = jwt.verify(token, secret);
-	console.log(result.email, "==");
-	let { title, detail, attachment, startdate } = req.body;
+	let result = jwt.verify(token, secret);	 
+	let { title, detail, attachment, startdate, enddate } = req.body;
     
 	const data = new Data({
 		title,
 		detail,
+		enddate,
 		attachment,
 		startdate,
 		email:result.email
@@ -46,41 +45,67 @@ const newData = async (req, res) => {
 	}
 	return res.status(200).send("ok");
 
-};
+}; 
 
-const updateData = async (req, res) => {
+const updateData = async (req, res) => { 
+	let token = req.headers.token;
+	let result = jwt.verify(token, secret);
+	let { title, detail, attachment, startdate,enddate, id } = req.body; 
 
-	let { title, detail, attachment, startdate, id } = req.body; 
-	let updateUser;
-
+	let check;
 	try {
-		updateUser = await Data.findOneAndUpdate({ _id: id }, {
-			$set: {
-				title,detail,attachment,startdate
-			}} );
-		console.log(updateUser);
+		check = await Data.findOne({ _id: id });
+		console.log(check,"===");
+		if ( !check || !check.email || check.email != result.email) {
+			res.status(404).send("authentication error  present here");
+		}
+		else {		
+			try {
+				await Data.findOneAndUpdate({ _id: id }, {
+					$set: {
+						title, detail, attachment, startdate, enddate
+					}
+				});
+		}
+			catch (err) {
+				console.log(err);
+			}
+
+			res.status(200).send("ok");
+		}
 	}
 	catch (err) {
 		console.log(err);
 	}
-	res.status(200).send("ok");
   
     
 };
 const deleteData = async (req, res) => {
+	let token = req.headers.token;
+	let result = jwt.verify(token, secret);
+
 	let {  id } = req.body; 
 
-	let deleteData;
+	let check;
 	try {
-		deleteData = await Data.findOneAndDelete({ _id: id });
+		check = await Data.findOne({ _id: id });
+		console.log(check,"===");
+		if ( !(check.email) || check.email != result.email) {
+			res.status(404).send("authentication error  present here");
+		}  
+		else {
+
+			try {
+				await Data.findOneAndDelete({ _id: id });
+			}
+			catch (err) {
+				console.log(err);
+			}
+			res.status(200).send("ok");
+		}
 	}
 	catch (err) {
-		console.log(err);
+		res.status(404).send({error:err});
 	}
-	res.status(200).send("ok");
-
-
-    
-
 };
 module.exports = { getAllData,newData ,updateData,deleteData};

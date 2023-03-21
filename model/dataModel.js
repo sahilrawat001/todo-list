@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
 
+
 const dataSchema = new Schema({
 	title: {
 		type: String,
@@ -14,13 +15,20 @@ const dataSchema = new Schema({
 		type: String,
 	},
 	startdate: {
-		type: Date,
-		default: (new Date()).getTime() 
+		type:  Date,
 	},
-	email: {
+	enddate: {
+		type: Date,
+	},
+	email: { 
 		type: String,
 		required:true,
+	},      
+	taskstatus: {
+	type: Number
 	}
+},
+// {timestamps: true}
+);
 
-});
 module.exports = mongoose.model("Data", dataSchema);

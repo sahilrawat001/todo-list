@@ -5,7 +5,7 @@ const Data = require("../model/dataModel");
 
 
 const checkAuth = async(req, res, next) => {
-	let token = req.headers.token;
+	let token = req.headers.token; 
 	let result = jwt.verify(token, secret);
 	let { id } = req.body;
 	let check; 
@@ -13,7 +13,7 @@ const checkAuth = async(req, res, next) => {
 		check = await Data.findOne({ _id: id });
         
 	}
-	catch (err) {
+	catch (err) { 
 		console.log(err);
 	}
   
@@ -21,7 +21,7 @@ const checkAuth = async(req, res, next) => {
 		next();
 	}
 	else {
-		res.status(404).send("authentication error");
+		res.status(404).send("authentication error  present");
 	}
 };
 module.exports = checkAuth;

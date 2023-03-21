@@ -22,7 +22,7 @@ const getAllData = async (req, res) => {
 
 
 const signup = async (req, res) => {
-	const { username, password, email } = req.body;
+	const { username, password, email ,mobile} = req.body;
 	let existUser;
 	try {
 		existUser = await User.findOne({ email });
@@ -39,7 +39,8 @@ const signup = async (req, res) => {
 	const user = new User({
 		username,
 		email,
-		password: hashPassword
+		password: hashPassword,
+		mobile
 	});
 	let token;
     
@@ -66,7 +67,7 @@ const signin = async (req, res) => {
 	catch (err) {
 		console.log(err);
 	}
-	if (existUser.length < 1) {
+	if (!existUser) {
 		return res.status(400).send({ message: "don't exist" });
 	}
 	const checkPassword = bcrypt.compareSync(password, existUser.password);
@@ -80,4 +81,47 @@ const signin = async (req, res) => {
 
 };
 
-module.exports = { getAllData, signup, signin };
+
+const updateUser = async (req, res) => {
+	let { username, password } = req.body;
+	let updateUser;
+	let token = req.headers.token;
+
+	let result = jwt.verify(token, secret);
+	const hashPassword = bcrypt.hashSync(password, parseInt(saltRounds));
+	try {
+		updateUser = await User.findOneAndUpdate({ email: result.email }, {
+			$set: {
+				username, password: hashPassword
+			}
+		});
+		if (!updateUser) {
+			return res.status(404).send({ message: "user not found" });
+		}
+	}
+	catch (err) {
+		console.log(err);
+	}
+	res.status(200).send("updated data successfully");
+	
+};
+
+const deleteUser = async (req, res) => {
+	let token = req.headers.token;
+
+	let result = jwt.verify(token, secret);
+	let deleteuser;
+	try {
+		deleteuser = await User.findOneAndDelete({ email: result.email });
+		if (!deleteuser) {
+			return res.status(404).send({ message: "user not found" });
+		}
+	}
+	catch (err) {
+		console.log(err);
+	}
+	res.status(200).send("deleted");
+
+};
+
+module.exports = { getAllData, signup, signin ,updateUser,deleteUser};

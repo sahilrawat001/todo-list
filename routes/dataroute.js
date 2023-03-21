@@ -1,12 +1,17 @@
 const express = require("express");
-const { getAllData, newData, updateData, deleteData } = require("../controller/dataController");
-const checkAuth = require("../controller/checkToken");
 const list = express.Router();
 
-list.get("/show", getAllData);
-list.post("/newdata", newData);
-list.put("/update",checkAuth, updateData);
-list.delete("/delete",checkAuth, deleteData);
+
+const { getAllData, newData, updateData, deleteData } = require("../controller/dataController");
+ const { checkAuthUser } = require("../middleware/userAuth");
+const { newDataValidate } = require("../middleware/dataValidation");
+
+
+list.get("/show", checkAuthUser, getAllData);
+list.post("/newdata",newDataValidate, checkAuthUser, newData);
+list.put("/update",  checkAuthUser, updateData);
+list.delete("/delete",  checkAuthUser , deleteData);
+
 
 module.exports = list;
 
