@@ -31,6 +31,6 @@ list.put("/update",  checkAuthUser, updateData);
 list.delete("/delete", checkAuthUser, deleteData);
 
 
-module.exports = list;
+module.exports = list;  
 
-  
+    

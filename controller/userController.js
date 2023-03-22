@@ -55,7 +55,7 @@ const signup = async (req, res) => {
 	catch (err) {
 		console.log(err);
 	}
-	return res.status(200).send({ token });
+	return res.status(200).send({ token, username: username });
 };
 
 const signin = async (req, res) => {
@@ -77,8 +77,7 @@ const signin = async (req, res) => {
 	}
 	let token;
 	token = jwt.sign({ email: email }, secret, { expiresIn: "3h" });
-
-	return res.status(200).send({ token });
+	return res.status(200).send({ token, username: existUser.username });
 
 };
 
@@ -103,7 +102,7 @@ const updateUser = async (req, res) => {
 	catch (err) {
 		console.log(err);
 	}
-	res.status(200).send("updated data successfully");
+	res.status(200).json("updated data successfully");
 	
 };
 
@@ -121,7 +120,7 @@ const deleteUser = async (req, res) => {
 	catch (err) {
 		console.log(err);
 	}
-	res.status(200).send("deleted");
+	res.status(200).json("deleted");
 
 };
 

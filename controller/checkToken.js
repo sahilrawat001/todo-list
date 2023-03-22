@@ -17,11 +17,11 @@ const checkAuth = async(req, res, next) => {
 		console.log(err);
 	}
   
-	if ( check.email && check.email == result.email) {
+	if (check.email && check.email == result.email) {
 		next();
 	}
 	else {
-		res.status(404).send("authentication error  present");
+		res.status(404).send({error: "authentication error  present"} ) ;
 	}
 };
 module.exports = checkAuth;

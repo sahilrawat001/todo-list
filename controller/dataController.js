@@ -36,11 +36,12 @@ const newData = async (req, res) => {
 	let findeEmail;
 	findeEmail = await User.findOne({ email: result.email });
 	if ( !result|| !(findeEmail) ) {
-	return 	res.status(404).send("authentication error 1");
+		return res.status(404).send({ error: "authentication error  1" } );
 	}
 
 	let { title, detail, attachment, taskstatus, startdate, enddate } = req.body;
-    let path =req.file.path;
+	let path = req.file.path; 
+	console.log(path);
 	const data = new Data({
 		title,
 		detail,  
@@ -54,7 +55,7 @@ const newData = async (req, res) => {
  
 		data.save(); 
 		console.log("oook");
-		return res.status(200).send("oook");
+		return res.status(200).send({ message: "success  " });
 	} 
 	catch (err) {
 		console.log("err");
@@ -88,7 +89,7 @@ const updateData = async (req, res) => {
 			return	res.status(404).send({ message: err});
 			}
 
-			res.status(200).send("ok");
+			res.status(200).send({message: "task added "});
 		}
 	}
 	catch (err) {
@@ -102,11 +103,12 @@ const deleteData = async (req, res) => {
 	let token = req.headers.token;
 	let result = jwt.verify(token, secret);
 
-	let {  id } = req.body; 
+	let   id  = req.headers._id; 
 
 	let check;
 	try {
-		check = await Data.findOne({ _id: id });
+		console.log(id);
+		check = await Data.findOne({ _id: id }); 
 		console.log(check,"===");
 		if ( !(check.email) || check.email != result.email) {
 			res.status(404).send("authentication error  present here");
@@ -119,7 +121,7 @@ const deleteData = async (req, res) => {
 			catch (err) {
 				console.log(err);
 			}
-			res.status(200).send("ok");
+			res.status(200).send({ message: "task deleted" });
 		}
 	}
 	catch (err) {
@@ -131,13 +133,14 @@ const getData = async (req, res) => {
 	let token = req.headers.token;
 	let result = jwt.verify(token, secret);
 	let { id } = req.body; 
-	let check;
 	try {
 	
  
 			let showData;
 			try {
-				showData= await Data.findOne({ _id: id });
+				showData = await Data.findOne({ _id: id });
+				
+				console.log(showData);
 			}
 			catch (err) {
 				return res.status(404).send({ message: err });
@@ -145,9 +148,15 @@ const getData = async (req, res) => {
 			if (!showData) {
 				return res.status(404).send({ message: " user not find" });
 			}
-			res.status(200).send({showData});
-		
-	}
+			else {
+				if (showData.email != result.email) {
+					return res.status(404).send("authentication error  present");
+				}
+				res.status(200).send({ showData });
+
+				}
+	} 
+ 
 	catch (err) {
 		res.status(404).send({ "error": err });
 		console.log(err);
