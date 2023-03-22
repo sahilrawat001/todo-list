@@ -133,12 +133,8 @@ const getData = async (req, res) => {
 	let { id } = req.body; 
 	let check;
 	try {
-		check = await Data.findOne({ _id: id });
-		console.log(check, "===");
-		if (!check || !check.email || check.email != result.email) {
-			res.status(404).send("authentication error  present ");
-		}
-		else {
+	
+ 
 			let showData;
 			try {
 				showData= await Data.findOne({ _id: id });
@@ -150,7 +146,7 @@ const getData = async (req, res) => {
 				return res.status(404).send({ message: " user not find" });
 			}
 			res.status(200).send({showData});
-		}
+		
 	}
 	catch (err) {
 		res.status(404).send({ "error": err });
