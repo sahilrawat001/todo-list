@@ -3,10 +3,12 @@ const Joi = require("joi");
 
 const newDataValidator = Joi.object().keys({
     title: Joi.string(),
-    email: Joi.string().email({ tlds: { allow: ["com", "in", "net"] } }).lowercase().required(),
-    detail: Joi.string(),
-     taskstatus: Joi.number().valid(0,1,2 ).required(),
+     detail: Joi.string(), 
+     attachment: Joi.any(),
+     startdate: Joi.date(),
+     enddate: Joi.date(),
+     taskstatus: Joi.number().valid(0, 1, 2),
 
-});
-
-module.exports = { newDataValidator };       
+});     
+  
+module.exports = { newDataValidator };  

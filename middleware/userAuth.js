@@ -23,7 +23,7 @@ const checkAuthUser = async (req, res, next) => {
             next();
         }
         else {
-            res.status(404).send("authentication error");
+            res.status(404).send("authentication error 2");
         }
 
     }

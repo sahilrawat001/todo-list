@@ -1,4 +1,5 @@
 const User = require("../model/usermodel");
+const Otp=require("../model/forgotModel");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -124,4 +125,52 @@ const deleteUser = async (req, res) => {
 
 };
 
-module.exports = { getAllData, signup, signin ,updateUser,deleteUser};
+const forgotOtp = async (req, res) => {
+	let { email } = req.body;
+	let findEmail;
+	findEmail = await User.findOne({ email: email });
+	if (!findEmail) {
+		return res.status(404).send({ message: "email not found" });
+	}
+	let token;
+	token = jwt.sign({ email: email ,type:"otp"}, secret, { expiresIn: "1h" });
+
+	const otp = Math.floor((Math.random() * 1000000) + 1);
+	const otpData = new Otp({
+		email,
+		otp
+	});
+	otpData.save();
+	console.log(otp);
+	res.send({ otp,token });
+};
+const checkOtp = async (req, res) => {
+	let { otp ,password} = req.body;
+	let token = req.headers.token;
+	let result = jwt.verify(token, secret);
+	const hashPassword = bcrypt.hashSync(password, parseInt(saltRounds));
+	let otpdata = await Otp.findOne({ email: result.email });
+	if (!otpdata) {
+		return res.status(404).send({ message: "otp not found" });
+	}
+	console.log(otpdata);
+	if (result.type === "otp") {
+		if (otpdata.otp=== otp) {
+			await User.findOneAndUpdate({ email: result.email }, {
+				$set: {
+					password: hashPassword
+				}
+			}); 
+			await Otp.findOneAndDelete({ email: result.email });
+			return res.status(200).send({ message: "password updated successfully" });	
+		}
+		else {
+			return res.status(400).send({ message: "otp not verified" });
+		}
+	}
+	else { 
+		return res.status(400).send({ message: "otp not verified" });
+	}
+};
+
+module.exports = { getAllData, forgotOtp, signup, checkOtp, signin ,updateUser,deleteUser};
