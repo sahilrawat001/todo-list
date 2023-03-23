@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const Data = require("../model/dataModel");
+const User = require("../model/usermodel");
 const secret = process.env.SECRET;
 
 
@@ -8,25 +8,23 @@ const checkAuthUser = async (req, res, next) => {
         
         let token = req.headers.token;
         let result = jwt.verify(token, secret);
-        if (!result) {
+         if (!result) {
             return res.status(401).send({ message: "token not found" });
         }
         else {
             let findeEmail;
             try {
-                findeEmail = await Data.findOne({ email: result.email });
-            }
+                findeEmail = await User.findOne({ email: result.email });
+             }
             catch (err) {
                 res.status(401).send("authentication error 3");
-                console.log(err);
-            }
-      
-            if (findeEmail && findeEmail.email) {
+             }
+             if (findeEmail ) {
                 // req.email = result.email;
                 next();
             }
             else {
-                res.status(401).send({error:"authentication error"} );
+                 res.status(401).send({error:"authentication error"} );
             }
 
         }

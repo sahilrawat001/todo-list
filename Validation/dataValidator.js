@@ -7,7 +7,7 @@ const newDataValidator = Joi.object().keys({
      attachment: Joi.any(),
      startdate: Joi.date(),
      enddate: Joi.date(),
-     taskstatus: Joi.number().valid(0, 1, 2),
+     taskstatus: Joi.number().valid(0, 1, 2,3),
 
 });     
 
@@ -18,7 +18,7 @@ const updateDataValidator = Joi.object().keys({
     startdate: Joi.date(),
     id:Joi.string(),
     enddate: Joi.date(),
-    taskstatus: Joi.number().valid(0, 1, 2).required()
+    taskstatus: Joi.number().valid(0, 1, 2,3).required()
 
 });  
   

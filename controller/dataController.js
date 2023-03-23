@@ -23,9 +23,9 @@ const getAllData = async (req, res) => {
 	catch (err) {
 		console.log(err);
 	}
-	if (datas.length < 1) {
-		return res.status(404).send({ message: " user not find" });
-	}
+	// if (datas.length < 1) {
+	// 	return res.status(404).send({ message: " user not find" });
+	// }
 	return res.status(200).send({ datas });
 }; 
 

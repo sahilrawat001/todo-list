@@ -28,7 +28,7 @@ const dataSchema = new Schema({
 	type: Number
 	}
 },
- {timestamps: true}
+ {timestamps: true,versionKey: false}
 );
 
 module.exports = mongoose.model("Data", dataSchema);
