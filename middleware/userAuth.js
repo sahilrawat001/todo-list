@@ -33,6 +33,6 @@ const checkAuthUser = async (req, res, next) => {
     catch (err) {
         res.status(404).send({error:err});
     }
-
+ 
 };
-module.exports = { checkAuthUser };
+module.exports = { checkAuthUser }; 

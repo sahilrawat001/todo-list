@@ -1,0 +1,33 @@
+
+from pwn import *
+import re;
+def regSolve(regx):
+    y=regx.split('[')
+    str=''
+    for x in range(len(y)):
+        if y[x]!='':
+            if '{' in y[x]:
+               y[x]=y[x].replace('}','').replace(']','').split('{')
+               str+=y[x][0][0]*int(y[x][1])
+            else:
+               str+=y[x][0]
+    return str;
+p=remote('puzzler7.imaginaryctf.org',11003)
+for x in range(100):
+    p.recv()
+    k=p.recv()
+    print(k)
+    x=k.decode()
+    t=x.split('\t')
+    payload=regSolve(t[1].split('\n')[0])
+    print(re.fullmatch(t[1].split('\n')[0],payload))
+    p.sendline(payload.encode())
+
+print(p.recv())
+print(p.recv())
+print(p.recv())
+print(p.recv())
+print(p.recv())
+print(p.recv())
+p.interactive()
+    #p=process()

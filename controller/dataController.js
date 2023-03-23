@@ -30,6 +30,7 @@ const getAllData = async (req, res) => {
 }; 
 
 const newData = async (req, res) => {
+	try { 
 	let token = req.headers.token;
 	let result = jwt.verify(token, secret);	 
  
@@ -40,18 +41,26 @@ const newData = async (req, res) => {
 	}
 
 	let { title, detail, attachment, taskstatus, startdate, enddate } = req.body;
-	let path = req.file.path; 
+	let path;
+	console.log(req.file,"----");
+	if ( req.file) {
+		path= req.file.path;  
+			
+	}
+	else {
+		path = "uploads/default.png";
+	}
 	console.log(path);
 	const data = new Data({
 		title,
 		detail,  
 		taskstatus,
-		enddate:Date(enddate), 
+		enddate:Date(enddate),  
 		attachment:path, 
 		startdate:Date(startdate),  
 		email:result.email   
 	});
-	try {   
+  
  
 		data.save(); 
 		console.log("oook");
@@ -59,7 +68,7 @@ const newData = async (req, res) => {
 	} 
 	catch (err) {
 		console.log("err");
-		return res.status(404).send({ message: "err" });
+		return res.status(404).send({ error:err.message });
 	}
 
 };  
@@ -67,8 +76,10 @@ const newData = async (req, res) => {
 const updateData = async (req, res) => { 
 	let token = req.headers.token;
 	let result = jwt.verify(token, secret);
-	let { title, detail, attachment, startdate,enddate, id } = req.body; 
-
+	let { title, detail, attachment,taskstatus, startdate,enddate } = req.body; 
+	let path; 
+	
+	let id = req.headers._id; 
 	let check; 
 	try {
 		check = await Data.findOne({ _id: id });
@@ -77,19 +88,28 @@ const updateData = async (req, res) => {
 			res.status(404).send("authentication error  present ");
 		}
 		else {		
+			if (req.file) {
+				console.log(req.file.path,"==**");
+
+				path = req.file.path;
+			}
+			else {
+				path=check.attachment;
+			}
 			try {
+				//console.log(typeof( taskstatus),"--");
 				await Data.findOneAndUpdate({ _id: id }, {
 					$set: {
-						title, detail,
-						attachment, startdate: Date(startdate), enddate:Date(enddate)
+						title, detail,taskstatus,
+						attachment:path, startdate: Date(startdate), enddate:Date(enddate)
 					}
 				});
 		}
 			catch (err) {
-			return	res.status(404).send({ message: err});
+			return	res.status(404).send({ message: err.message});
 			}
 
-			res.status(200).send({message: "task added "});
+			res.status(200).send({message: "task updated "});
 		}
 	}
 	catch (err) {
@@ -119,7 +139,7 @@ const deleteData = async (req, res) => {
 				await Data.findOneAndDelete({ _id: id });
 			}
 			catch (err) {
-				console.log(err);
+				console.log(err); 
 			}
 			res.status(200).send({ message: "task deleted" });
 		}

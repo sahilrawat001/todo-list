@@ -1,33 +1,26 @@
 const express = require("express");
 const list = express.Router();
+const IMAGEDATABASEURL = process.env.IMAGEDATABASEURL;
 
 
 const { getAllData, newData, updateData, deleteData, getData } = require("../controller/dataController");
- const { checkAuthUser } = require("../middleware/userAuth");
-const { newDataValidate } = require("../middleware/dataValidation");
- 
+const { checkAuthUser } = require("../middleware/userAuth");
+const { validateData } = require("../middleware/userValidator");
+const { updateDataValidator, newDataValidator } = require("../Validation/dataValidator");
+const uploads = require("../model/multer");
 
-const multer = require("multer");
-const uploads = multer({
-
-    storage: multer.diskStorage({
-        destination: function (req, file, func) {
-            func(null, "uploads");
-        },
-        filename: function (req, file, fun) {
-            fun(null, file.fieldname + "-" + Date.now() + ".jpg");
-        }
-
-    })
-}).single("attachment"); 
 
     
+list.use(`/uploads`, express.static(IMAGEDATABASEURL));
 
 list.get("/showall", checkAuthUser, getAllData);
+
 list.get("/showone", checkAuthUser, getData);
 
-list.post("/newdata", newDataValidate, uploads, newData);
-list.put("/update",  checkAuthUser, updateData);
+list.post("/newdata", validateData(newDataValidator), uploads, newData);
+
+list.put("/update", checkAuthUser, uploads, validateData(updateDataValidator), updateData);
+
 list.delete("/delete", checkAuthUser, deleteData);
 
 

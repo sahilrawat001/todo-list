@@ -3,16 +3,23 @@ const router = express.Router();
 
 
 const { getAllData, signup, signin, updateUser, deleteUser, forgotOtp, checkOtp } = require("../controller/userController");
-const { signupValidate, signinValidate, updateValidate } = require("../middleware/userValidator");
+const {   validateData } = require("../middleware/userValidator");
+const { signupValidator, signinValidator, updateUserValidator } = require("../Validation/userValidator");
 
 
 
 router.get("/show", getAllData);
-router.post("/signup", signupValidate ,signup);
-router.post("/signin", signinValidate, signin); 
-router.put("/update", updateValidate, updateUser);
+
+router.post("/signup", validateData(signupValidator), signup);
+
+router.post("/signin", validateData(signinValidator), signin); 
+
+router.put("/update", validateData(updateUserValidator), updateUser);
+
 router.delete("/delete", deleteUser);
-router.post("/forgototp", forgotOtp); 
+
+router.post("/forgotpassword", forgotOtp); 
+ 
 router.post("/checkotp",checkOtp  ); 
  
 
