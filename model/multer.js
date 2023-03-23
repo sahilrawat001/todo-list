@@ -3,7 +3,7 @@ const uploads = multer({
 
     storage: multer.diskStorage({
         destination: function (req, file, func) {
-            func(null, "uploads");
+            func(null, "uploads"); 
         },
         filename: function (req, file, fun) {
             let filetyp = /jpeg|jpg|png|gif/;
